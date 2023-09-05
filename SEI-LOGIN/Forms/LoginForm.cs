@@ -34,7 +34,7 @@ namespace SEI_LOGIN.Forms
             SettingPanel.Visible = false;
 
             txtID.Text = "SUPER";
-            txtPassword.Text = "Password";
+            txtPassword.Text = "GIANT";
         }
 
         private void SetConfigIni()
@@ -124,7 +124,7 @@ namespace SEI_LOGIN.Forms
 
         private void Settings_Click(object sender, EventArgs e)
         {
-            SettingPanel.Visible = !SettingPanel.Visible;
+            SettingsVisible();
         }
 
         private void btnUpload_Click(object sender, EventArgs e)
@@ -155,22 +155,28 @@ namespace SEI_LOGIN.Forms
                 cmd.Parameters.AddWithValue("@CD_CORP", Company);
                 cmd.Parameters.AddWithValue("@CD_EMP", Id);
                 cmd.Parameters.AddWithValue("@NO_PWD", Pwd);
-
                 con.Open();
                 cmd.CommandType = CommandType.StoredProcedure;
-                
-                cmd.ExecuteReader();
-                
-                
-                //int result = cmd.ExecuteNonQuery();
-
-                //if (result == 0)
-                //{
-                //    return false;
-                //}
-
-                return true;
+                return cmd.ExecuteNonQuery() > 0;
             }
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            string DBAddress = txtDBAddress.Text;
+            string DBPort = txtPort.Text;
+            string Database = txtDatabase.Text;
+            string UID = txtUID.Text;
+            string PWD = txtDBPassword.Text;
+
+            Config.SetConfigIni(DBAddress, DBPort, Database, UID, PWD);
+
+            SettingsVisible();
+        }
+
+        private void SettingsVisible()
+        {
+            SettingPanel.Visible = !SettingPanel.Visible;
         }
     }
 }

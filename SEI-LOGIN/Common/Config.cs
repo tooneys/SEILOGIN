@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Drawing;
+using System.Net;
+using System.Reflection;
 
 namespace SEI_LOGIN.Common
 {
@@ -35,6 +37,35 @@ namespace SEI_LOGIN.Common
                 default:
                     Config.DBConnectString = "";
                     break;
+            }
+        }
+
+        public static void SetConfigIni(string DBAddress, string DBPort, string Database, string UID, string PWD)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(DBAddress) ||
+                    string.IsNullOrEmpty(DBPort) ||
+                    string.IsNullOrEmpty(Database) ||
+                    string.IsNullOrEmpty(UID) ||
+                    string.IsNullOrEmpty(PWD))
+                {
+                    MessageBox.Show("모든 필드를 입력하세요.");
+                    return;
+                }
+
+                string initFilePath = Application.StartupPath + "\\common.ini";
+                Util.WriteIniFile("DATABASE", "ADDRESS", Security.Encrypt(DBAddress), initFilePath);
+                Util.WriteIniFile("DATABASE", "PORT", Security.Encrypt(DBPort), initFilePath);
+                Util.WriteIniFile("DATABASE", "DATABASE", Security.Encrypt(Database), initFilePath);
+                Util.WriteIniFile("DATABASE", "S_UID", Security.Encrypt(UID), initFilePath);
+                Util.WriteIniFile("DATABASE", "S_PWD", Security.Encrypt(PWD), initFilePath);
+
+                MessageBox.Show("저장 되었습니다.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }
