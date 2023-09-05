@@ -34,6 +34,8 @@
             label3 = new Label();
             btnClose = new PictureBox();
             panelMid = new Panel();
+            mainScreen = new PictureBox();
+            panel1 = new Panel();
             SettingPanel = new Panel();
             groupBox1 = new GroupBox();
             btnCancel = new Button();
@@ -48,8 +50,6 @@
             txtPort = new TextBox();
             label8 = new Label();
             txtDBAddress = new TextBox();
-            mainScreen = new PictureBox();
-            panel1 = new Panel();
             cmbCompany = new ComboBox();
             btnSettings = new Button();
             btnLogin = new Button();
@@ -64,10 +64,10 @@
             ((System.ComponentModel.ISupportInitialize)btnUpload).BeginInit();
             ((System.ComponentModel.ISupportInitialize)btnClose).BeginInit();
             panelMid.SuspendLayout();
-            SettingPanel.SuspendLayout();
-            groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainScreen).BeginInit();
             panel1.SuspendLayout();
+            SettingPanel.SuspendLayout();
+            groupBox1.SuspendLayout();
             panelBot.SuspendLayout();
             SuspendLayout();
             // 
@@ -118,7 +118,6 @@
             // 
             // panelMid
             // 
-            panelMid.Controls.Add(SettingPanel);
             panelMid.Controls.Add(mainScreen);
             panelMid.Controls.Add(panel1);
             panelMid.Dock = DockStyle.Fill;
@@ -127,10 +126,38 @@
             panelMid.Size = new Size(919, 372);
             panelMid.TabIndex = 1;
             // 
+            // mainScreen
+            // 
+            mainScreen.Dock = DockStyle.Left;
+            mainScreen.Image = (Image)resources.GetObject("mainScreen.Image");
+            mainScreen.Location = new Point(0, 0);
+            mainScreen.Name = "mainScreen";
+            mainScreen.Size = new Size(613, 372);
+            mainScreen.SizeMode = PictureBoxSizeMode.StretchImage;
+            mainScreen.TabIndex = 0;
+            mainScreen.TabStop = false;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(SettingPanel);
+            panel1.Controls.Add(cmbCompany);
+            panel1.Controls.Add(btnSettings);
+            panel1.Controls.Add(btnLogin);
+            panel1.Controls.Add(txtPassword);
+            panel1.Controls.Add(txtID);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(label9);
+            panel1.Controls.Add(label1);
+            panel1.Dock = DockStyle.Right;
+            panel1.Location = new Point(558, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(361, 372);
+            panel1.TabIndex = 1;
+            // 
             // SettingPanel
             // 
             SettingPanel.Controls.Add(groupBox1);
-            SettingPanel.Location = new Point(352, 53);
+            SettingPanel.Location = new Point(71, 39);
             SettingPanel.Name = "SettingPanel";
             SettingPanel.Size = new Size(252, 236);
             SettingPanel.TabIndex = 5;
@@ -165,6 +192,7 @@
             btnCancel.TabIndex = 2;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
             // 
             // btnOK
             // 
@@ -261,33 +289,6 @@
             txtDBAddress.Size = new Size(144, 22);
             txtDBAddress.TabIndex = 1;
             txtDBAddress.Text = "112.111.111.111";
-            // 
-            // mainScreen
-            // 
-            mainScreen.Dock = DockStyle.Left;
-            mainScreen.Image = (Image)resources.GetObject("mainScreen.Image");
-            mainScreen.Location = new Point(0, 0);
-            mainScreen.Name = "mainScreen";
-            mainScreen.Size = new Size(613, 372);
-            mainScreen.SizeMode = PictureBoxSizeMode.StretchImage;
-            mainScreen.TabIndex = 0;
-            mainScreen.TabStop = false;
-            // 
-            // panel1
-            // 
-            panel1.Controls.Add(cmbCompany);
-            panel1.Controls.Add(btnSettings);
-            panel1.Controls.Add(btnLogin);
-            panel1.Controls.Add(txtPassword);
-            panel1.Controls.Add(txtID);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(label9);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(558, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(361, 372);
-            panel1.TabIndex = 1;
             // 
             // cmbCompany
             // 
@@ -396,12 +397,12 @@
             ((System.ComponentModel.ISupportInitialize)btnUpload).EndInit();
             ((System.ComponentModel.ISupportInitialize)btnClose).EndInit();
             panelMid.ResumeLayout(false);
-            SettingPanel.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)mainScreen).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            SettingPanel.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             panelBot.ResumeLayout(false);
             panelBot.PerformLayout();
             ResumeLayout(false);
