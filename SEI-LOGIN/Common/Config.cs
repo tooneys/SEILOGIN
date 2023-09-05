@@ -6,8 +6,8 @@ namespace SEI_LOGIN.Common
     {
         public static void GetConfigIni()
         {
-            string sProgramName = Assembly.GetExecutingAssembly().GetName().CodeBase;           //프로그램명
-            string sProgramPath = Path.GetDirectoryName(sProgramName.Replace("file:///", ""));  //프로그램 위치
+            string? sProgramName = Assembly.GetExecutingAssembly().GetName().CodeBase;           //프로그램명
+            string? sProgramPath = Path.GetDirectoryName(sProgramName?.Replace("file:///", ""));  //프로그램 위치
             string sCommonPath = (sProgramPath + "\\common.ini");
 
             Config.DBType = System.Configuration.ConfigurationManager.AppSettings["DBType"];

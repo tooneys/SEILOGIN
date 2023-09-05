@@ -143,6 +143,8 @@ namespace SEI_LOGIN.Forms
                 MessageBox.Show("Login Successed");
             else
                 MessageBox.Show("Login Failed");
+
+            return;
         }
 
         private static bool Login(string Company, string Id, string Pwd)
@@ -156,12 +158,17 @@ namespace SEI_LOGIN.Forms
 
                 con.Open();
                 cmd.CommandType = CommandType.StoredProcedure;
-                int result = cmd.ExecuteNonQuery();
+                
+                cmd.ExecuteReader();
+                
+                
+                //int result = cmd.ExecuteNonQuery();
 
-                if (result == 0)
-                {
-                    return false;
-                }
+                //if (result == 0)
+                //{
+                //    return false;
+                //}
+
                 return true;
             }
         }
