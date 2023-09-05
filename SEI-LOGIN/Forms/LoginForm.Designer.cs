@@ -79,14 +79,14 @@
             panelTop.Dock = DockStyle.Top;
             panelTop.Location = new Point(0, 0);
             panelTop.Name = "panelTop";
-            panelTop.Size = new Size(919, 50);
+            panelTop.Size = new Size(700, 50);
             panelTop.TabIndex = 0;
             // 
             // btnUpload
             // 
             btnUpload.Dock = DockStyle.Right;
             btnUpload.Image = (Image)resources.GetObject("btnUpload.Image");
-            btnUpload.Location = new Point(801, 0);
+            btnUpload.Location = new Point(582, 0);
             btnUpload.Name = "btnUpload";
             btnUpload.Size = new Size(59, 50);
             btnUpload.SizeMode = PictureBoxSizeMode.CenterImage;
@@ -108,7 +108,7 @@
             // 
             btnClose.Dock = DockStyle.Right;
             btnClose.Image = Properties.Resources.Close;
-            btnClose.Location = new Point(860, 0);
+            btnClose.Location = new Point(641, 0);
             btnClose.Name = "btnClose";
             btnClose.Size = new Size(59, 50);
             btnClose.SizeMode = PictureBoxSizeMode.CenterImage;
@@ -123,7 +123,7 @@
             panelMid.Dock = DockStyle.Fill;
             panelMid.Location = new Point(0, 50);
             panelMid.Name = "panelMid";
-            panelMid.Size = new Size(919, 372);
+            panelMid.Size = new Size(700, 300);
             panelMid.TabIndex = 1;
             // 
             // mainScreen
@@ -132,7 +132,7 @@
             mainScreen.Image = (Image)resources.GetObject("mainScreen.Image");
             mainScreen.Location = new Point(0, 0);
             mainScreen.Name = "mainScreen";
-            mainScreen.Size = new Size(613, 372);
+            mainScreen.Size = new Size(389, 300);
             mainScreen.SizeMode = PictureBoxSizeMode.StretchImage;
             mainScreen.TabIndex = 0;
             mainScreen.TabStop = false;
@@ -149,9 +149,9 @@
             panel1.Controls.Add(label9);
             panel1.Controls.Add(label1);
             panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(558, 0);
+            panel1.Location = new Point(339, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(361, 372);
+            panel1.Size = new Size(361, 300);
             panel1.TabIndex = 1;
             // 
             // SettingPanel
@@ -365,9 +365,9 @@
             // 
             panelBot.Controls.Add(msg);
             panelBot.Dock = DockStyle.Bottom;
-            panelBot.Location = new Point(0, 422);
+            panelBot.Location = new Point(0, 350);
             panelBot.Name = "panelBot";
-            panelBot.Size = new Size(919, 50);
+            panelBot.Size = new Size(700, 50);
             panelBot.TabIndex = 2;
             // 
             // msg
@@ -383,7 +383,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(919, 472);
+            ClientSize = new Size(700, 400);
             Controls.Add(panelMid);
             Controls.Add(panelBot);
             Controls.Add(panelTop);

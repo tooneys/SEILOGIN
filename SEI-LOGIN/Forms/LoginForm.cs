@@ -23,7 +23,7 @@ namespace SEI_LOGIN.Forms
         {
             SetConfigIni();
             CompanyInit();
-            
+
             SettingPanel.Visible = false;
             txtID.Text = "SUPER";
             txtPassword.Text = "GIANT";
