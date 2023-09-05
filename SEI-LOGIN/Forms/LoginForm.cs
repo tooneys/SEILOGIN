@@ -22,32 +22,45 @@ namespace SEI_LOGIN.Forms
         private void InitForm()
         {
             SetConfigIni();
-
-            companyList.Clear();
-            companyList.Add(new { Code = "01", Name = "(주)케이언트" });
-
-            cmbCompany.DataSource = companyList;
-            cmbCompany.DisplayMember = "Name";
-            cmbCompany.ValueMember = "Code";
-            cmbCompany.SelectedIndex = 0;
-
+            CompanyInit();
+            
             SettingPanel.Visible = false;
-
             txtID.Text = "SUPER";
             txtPassword.Text = "GIANT";
-        }
 
-        private void SetConfigIni()
-        {
-            try
+            void CompanyInit()
             {
-                txtDBAddress.Text = Config.DBAddress;
-                txtPort.Text = Config.DBPort;
-                txtUID.Text = Config.DBUserID;
-                txtDBPassword.Text = Config.DBUserPwd;
-                txtDatabase.Text = Config.DBDatabase;
+                using (SqlConnection con = new SqlConnection(Config.DBConnectString))
+                using (SqlCommand cmd = new SqlCommand("SP_COMN_COMPANY_CMB", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        companyList.Add(new { Code = reader["CD_CODE"], Name = reader["NM_CODE"] });
+                    }
+                }
+
+                cmbCompany.DataSource = companyList;
+                cmbCompany.DisplayMember = "Name";
+                cmbCompany.ValueMember = "Code";
+                cmbCompany.SelectedIndex = 0;
             }
-            catch (Exception e) { Console.WriteLine(e.Message); }
+
+            void SetConfigIni()
+            {
+                try
+                {
+                    txtDBAddress.Text = Config.DBAddress;
+                    txtPort.Text = Config.DBPort;
+                    txtUID.Text = Config.DBUserID;
+                    txtDBPassword.Text = Config.DBUserPwd;
+                    txtDatabase.Text = Config.DBDatabase;
+                }
+                catch (Exception e) { Console.WriteLine(e.Message); }
+            }
         }
 
         private void btn_login_Click(object sender, EventArgs e)

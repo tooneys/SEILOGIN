@@ -6,7 +6,9 @@ namespace SEI_LOGIN
 {
     internal static class Program
     {
-
+        /// <summary>
+        /// appsettings.json interface
+        /// </summary>
         public static IConfiguration Configuration;
 
         /// <summary>
@@ -17,12 +19,13 @@ namespace SEI_LOGIN
         {
             var processName = Process.GetCurrentProcess().ProcessName;
             bool isNew;
-            _ = new Mutex(true, processName, out isNew);
-
-            if (!isNew)
+            using (new Mutex(true, processName, out isNew))
             {
-                MessageBox.Show("이미 실행중 입니다!", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                if (!isNew)
+                {
+                    MessageBox.Show("이미 실행중 입니다!", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
 
             var builder = new ConfigurationBuilder()
