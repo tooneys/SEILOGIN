@@ -142,7 +142,8 @@ namespace SEI_LOGIN.Forms
 
         private void btnUpload_Click(object sender, EventArgs e)
         {
-            SystemFileUpload fileUpload = new SystemFileUpload();
+            string CorpCode = cmbCompany.SelectedValue.ToString();
+            SystemFileUpload fileUpload = new SystemFileUpload(CorpCode);
             fileUpload.ShowDialog();
         }
 
@@ -153,9 +154,11 @@ namespace SEI_LOGIN.Forms
             string userPwd = txtPassword.Text.ToString();
 
             if (Login(companyValue, userId, userPwd))
-                MessageBox.Show("Login Successed");
+                MessageBox.Show("Login Successed", "Login", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
                 MessageBox.Show("Login Failed");
+
+
         }
 
         private static bool Login(string Company, string Id, string Pwd)

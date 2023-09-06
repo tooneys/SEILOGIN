@@ -17,15 +17,15 @@ namespace SEI_LOGIN
         [STAThread]
         static void Main()
         {
-            var processName = Process.GetCurrentProcess().ProcessName;
-            bool isNew;
-            using (new Mutex(true, processName, out isNew))
+            // 이미 실행 중인 프로세스 이름 확인
+            string currentProcessName = Process.GetCurrentProcess().ProcessName;
+            Process[] runningProcesses = Process.GetProcessesByName(currentProcessName);
+
+            // 현재 프로세스를 제외한 동일한 이름의 프로세스가 실행 중인 경우 실행 막기
+            if (runningProcesses.Length > 1)
             {
-                if (!isNew)
-                {
-                    MessageBox.Show("이미 실행중 입니다!", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                MessageBox.Show("프로그램이 이미 실행 중입니다.", "경고", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // 실행 중지
             }
 
             var builder = new ConfigurationBuilder()

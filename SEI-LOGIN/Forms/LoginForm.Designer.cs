@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             panelTop = new Panel();
             btnUpload = new PictureBox();
-            label3 = new Label();
             btnClose = new PictureBox();
             panelMid = new Panel();
             mainScreen = new PictureBox();
@@ -59,6 +58,7 @@
             label9 = new Label();
             label1 = new Label();
             panelBot = new Panel();
+            progressBar = new ProgressBar();
             msg = new Label();
             panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnUpload).BeginInit();
@@ -74,7 +74,6 @@
             // panelTop
             // 
             panelTop.Controls.Add(btnUpload);
-            panelTop.Controls.Add(label3);
             panelTop.Controls.Add(btnClose);
             panelTop.Dock = DockStyle.Top;
             panelTop.Location = new Point(0, 0);
@@ -93,16 +92,6 @@
             btnUpload.TabIndex = 2;
             btnUpload.TabStop = false;
             btnUpload.Click += btnUpload_Click;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Arial Narrow", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(12, 9);
-            label3.Name = "label3";
-            label3.Size = new Size(113, 29);
-            label3.TabIndex = 1;
-            label3.Text = "㈜ 케이언트";
             // 
             // btnClose
             // 
@@ -157,7 +146,7 @@
             // SettingPanel
             // 
             SettingPanel.Controls.Add(groupBox1);
-            SettingPanel.Location = new Point(71, 39);
+            SettingPanel.Location = new Point(71, 20);
             SettingPanel.Name = "SettingPanel";
             SettingPanel.Size = new Size(252, 236);
             SettingPanel.TabIndex = 5;
@@ -363,6 +352,7 @@
             // 
             // panelBot
             // 
+            panelBot.Controls.Add(progressBar);
             panelBot.Controls.Add(msg);
             panelBot.Dock = DockStyle.Bottom;
             panelBot.Location = new Point(0, 350);
@@ -370,10 +360,17 @@
             panelBot.Size = new Size(700, 50);
             panelBot.TabIndex = 2;
             // 
+            // progressBar
+            // 
+            progressBar.Location = new Point(12, 15);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(167, 23);
+            progressBar.TabIndex = 1;
+            // 
             // msg
             // 
             msg.AutoSize = true;
-            msg.Location = new Point(29, 18);
+            msg.Location = new Point(185, 20);
             msg.Name = "msg";
             msg.Size = new Size(179, 14);
             msg.TabIndex = 0;
@@ -381,19 +378,17 @@
             // 
             // LoginForm
             // 
-            AutoScaleDimensions = new SizeF(96F, 96F);
-            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleDimensions = new SizeF(7F, 14F);
+            AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(700, 400);
             Controls.Add(panelMid);
             Controls.Add(panelBot);
             Controls.Add(panelTop);
             Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            FormBorderStyle = FormBorderStyle.None;
+            MaximizeBox = false;
             Name = "LoginForm";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "SEIERP LOGIN";
+            Text = "(주)케이언트";
             panelTop.ResumeLayout(false);
-            panelTop.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)btnUpload).EndInit();
             ((System.ComponentModel.ISupportInitialize)btnClose).EndInit();
             panelMid.ResumeLayout(false);
@@ -423,7 +418,6 @@
         private Label label1;
         private PictureBox btnClose;
         private Label msg;
-        private Label label3;
         private Panel SettingPanel;
         private Label label8;
         private Label label7;
@@ -441,5 +435,6 @@
         private PictureBox btnUpload;
         private ComboBox cmbCompany;
         private Label label9;
+        private ProgressBar progressBar;
     }
 }
