@@ -8,7 +8,7 @@ namespace SEI_LOGIN.Forms
 {
     public partial class LoginForm : Form
     {
-        string[] fileNames = { "SEIERP" };
+        private string[] fileNames = { "SEIERP" };
         private BindingList<object> companyList = new BindingList<object>();
 
         public LoginForm()
@@ -55,8 +55,7 @@ namespace SEI_LOGIN.Forms
                 txtID.Focus();
                 SaveOption.Checked = Properties.Settings.Default.SaveOption;
 
-                if (txtID.Text.Length > 0)
-                    txtPassword.Focus();
+                if (txtID.Text.Length > 0) { txtPassword.Focus(); }
             }
         }
 
@@ -95,9 +94,6 @@ namespace SEI_LOGIN.Forms
             {
                 try
                 {
-                    //저장여부 물어보고 닫기
-                    //process.CloseMainWindow();
-                    //강제종료
                     process.Kill();
                     process.Close();
                 }
@@ -110,12 +106,9 @@ namespace SEI_LOGIN.Forms
 
         private static bool Fn_fileExist()
         {
+
             DirectoryInfo DirPath = new System.IO.DirectoryInfo(Application.StartupPath);
             FileInfo[] files = DirPath.GetFiles("*.exe");
-
-            string UpFileName = string.Empty;
-            DateTime UpFileDate;
-            string UpDownFolder = string.Empty;
 
             using (SqlConnection con = new SqlConnection(Config.DBConnectString))
             using (SqlCommand cmd = new SqlCommand("SP_SYS_UPDATEFILE_CHK_S", con))
@@ -125,9 +118,9 @@ namespace SEI_LOGIN.Forms
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    UpFileName = reader["NM_FILE"].ToString();
-                    UpFileDate = DateTime.Parse(reader["DT_FILE"].ToString());
-                    UpDownFolder = reader["NM_DOWNFOLDER"].ToString();
+                    string UpFileName = reader["NM_FILE"].ToString();
+                    DateTime UpFileDate = DateTime.Parse(reader["DT_FILE"].ToString());
+                    string UpDownFolder = reader["NM_DOWNFOLDER"].ToString();
 
                     //실행파일 경우만
                     if (UpDownFolder == "EXECUTE")
@@ -193,43 +186,31 @@ namespace SEI_LOGIN.Forms
 
             if (Login(companyValue, userId, userPwd))
             {
+                MessageVisible();
+                //Process Finished
+                MessageShowing("기존 실행프로그램을 종료합니다.");
                 foreach (string fileName in fileNames)
                 {
-                    //파일실행유무 체크
                     if (Fn_isProcessing(fileName))
                     {
-                        //Code Finding SEIERP
-                        DialogResult result = MessageBox.Show("실행중인 프로그램이 있습니다. 종료하고 진행하시겠습니까?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                        if (result == DialogResult.Yes)
-                        {
-                            //Code Killing SEIERP
-                            Fn_killingProcess(fileName);
-                        }
+                        Fn_killingProcess(fileName);
                     }
                 }
-
-                //Msg Showing
-                MessageVisible();
+                
                 MessageShowing("업데이트 파일이 있는지 확인중입니다.");
-
-                //파일유무 체크
-                //Code DBFile & LocalFile Compare
-                if (Fn_fileExist())
-                {
-                    //Code
-                }
+                
+                //UploadFile Download
+                int DownloadCount = UploadFileCount();
+                MessageShowing($" {DownloadCount}개 파일 다운로드 합니다.");
 
 
-                //Msg Closing
-                MessageVisible();
-                MessageBox.Show("Login Successed", "Login", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageShowing("업데이트가 완료되었습니다.");
+                Application.Exit();
             }
             else
             {
-                MessageBox.Show("Login Failed");
+                MBox.ShowErrorMessage("Login Failed");
             }
-
-
         }
 
         private static bool Login(string Company, string Id, string Pwd)
@@ -279,6 +260,23 @@ namespace SEI_LOGIN.Forms
         private void MessageShowing(string Message)
         {
             msg.Text = Message;
+        }
+
+        private int UploadFileCount()
+        {
+            int count = 0;
+            using (SqlConnection con = new SqlConnection(Config.DBConnectString))
+            using (SqlCommand cmd = new SqlCommand("SP_SYS_UPDATEFILE_CHK_S", con))
+            {
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    count++;
+                }
+            }
+            return count;
         }
     }
 }

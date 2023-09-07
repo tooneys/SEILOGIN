@@ -34,8 +34,6 @@
             btnUpload = new PictureBox();
             btnClose = new PictureBox();
             panelMid = new Panel();
-            mainScreen = new PictureBox();
-            panel1 = new Panel();
             SettingPanel = new Panel();
             groupBox1 = new GroupBox();
             btnCancel = new Button();
@@ -50,6 +48,9 @@
             txtPort = new TextBox();
             label8 = new Label();
             txtDBAddress = new TextBox();
+            mainScreen = new PictureBox();
+            panel1 = new Panel();
+            SaveOption = new CheckBox();
             cmbCompany = new ComboBox();
             btnSettings = new Button();
             btnLogin = new Button();
@@ -59,17 +60,15 @@
             label9 = new Label();
             label1 = new Label();
             panelBot = new Panel();
-            progressBar = new ProgressBar();
             msg = new Label();
-            SaveOption = new CheckBox();
             panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnUpload).BeginInit();
             ((System.ComponentModel.ISupportInitialize)btnClose).BeginInit();
             panelMid.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)mainScreen).BeginInit();
-            panel1.SuspendLayout();
             SettingPanel.SuspendLayout();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)mainScreen).BeginInit();
+            panel1.SuspendLayout();
             panelBot.SuspendLayout();
             SuspendLayout();
             // 
@@ -128,34 +127,6 @@
             panelMid.Name = "panelMid";
             panelMid.Size = new Size(700, 300);
             panelMid.TabIndex = 1;
-            // 
-            // mainScreen
-            // 
-            mainScreen.Dock = DockStyle.Left;
-            mainScreen.Image = (Image)resources.GetObject("mainScreen.Image");
-            mainScreen.Location = new Point(0, 0);
-            mainScreen.Name = "mainScreen";
-            mainScreen.Size = new Size(396, 300);
-            mainScreen.SizeMode = PictureBoxSizeMode.StretchImage;
-            mainScreen.TabIndex = 0;
-            mainScreen.TabStop = false;
-            // 
-            // panel1
-            // 
-            panel1.Controls.Add(SaveOption);
-            panel1.Controls.Add(cmbCompany);
-            panel1.Controls.Add(btnSettings);
-            panel1.Controls.Add(btnLogin);
-            panel1.Controls.Add(txtPassword);
-            panel1.Controls.Add(txtID);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(label9);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(339, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(361, 300);
-            panel1.TabIndex = 1;
             // 
             // SettingPanel
             // 
@@ -293,12 +264,52 @@
             txtDBAddress.TabIndex = 1;
             txtDBAddress.Text = "112.111.111.111";
             // 
+            // mainScreen
+            // 
+            mainScreen.Dock = DockStyle.Left;
+            mainScreen.Image = (Image)resources.GetObject("mainScreen.Image");
+            mainScreen.Location = new Point(0, 0);
+            mainScreen.Name = "mainScreen";
+            mainScreen.Size = new Size(396, 300);
+            mainScreen.SizeMode = PictureBoxSizeMode.StretchImage;
+            mainScreen.TabIndex = 0;
+            mainScreen.TabStop = false;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(SaveOption);
+            panel1.Controls.Add(cmbCompany);
+            panel1.Controls.Add(btnSettings);
+            panel1.Controls.Add(btnLogin);
+            panel1.Controls.Add(txtPassword);
+            panel1.Controls.Add(txtID);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(label9);
+            panel1.Controls.Add(label1);
+            panel1.Dock = DockStyle.Right;
+            panel1.Location = new Point(339, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(361, 300);
+            panel1.TabIndex = 1;
+            // 
+            // SaveOption
+            // 
+            SaveOption.AutoSize = true;
+            SaveOption.Location = new Point(256, 170);
+            SaveOption.Name = "SaveOption";
+            SaveOption.Size = new Size(58, 18);
+            SaveOption.TabIndex = 6;
+            SaveOption.Text = "ID저장";
+            SaveOption.UseVisualStyleBackColor = true;
+            // 
             // cmbCompany
             // 
+            cmbCompany.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbCompany.Font = new Font("Consolas", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             cmbCompany.FormattingEnabled = true;
             cmbCompany.Location = new Point(147, 87);
             cmbCompany.Name = "cmbCompany";
-            cmbCompany.Size = new Size(167, 22);
+            cmbCompany.Size = new Size(167, 23);
             cmbCompany.TabIndex = 5;
             cmbCompany.TabStop = false;
             // 
@@ -366,7 +377,6 @@
             // 
             // panelBot
             // 
-            panelBot.Controls.Add(progressBar);
             panelBot.Controls.Add(msg);
             panelBot.Dock = DockStyle.Bottom;
             panelBot.Location = new Point(0, 350);
@@ -374,31 +384,14 @@
             panelBot.Size = new Size(700, 50);
             panelBot.TabIndex = 2;
             // 
-            // progressBar
-            // 
-            progressBar.Location = new Point(12, 15);
-            progressBar.Name = "progressBar";
-            progressBar.Size = new Size(167, 23);
-            progressBar.TabIndex = 1;
-            // 
             // msg
             // 
             msg.AutoSize = true;
-            msg.Location = new Point(185, 20);
+            msg.Location = new Point(12, 17);
             msg.Name = "msg";
             msg.Size = new Size(179, 14);
             msg.TabIndex = 0;
             msg.Text = "업데이트 파일이 있는지 확인중입니다.";
-            // 
-            // SaveOption
-            // 
-            SaveOption.AutoSize = true;
-            SaveOption.Location = new Point(256, 170);
-            SaveOption.Name = "SaveOption";
-            SaveOption.Size = new Size(58, 18);
-            SaveOption.TabIndex = 6;
-            SaveOption.Text = "ID저장";
-            SaveOption.UseVisualStyleBackColor = true;
             // 
             // LoginForm
             // 
@@ -419,12 +412,12 @@
             ((System.ComponentModel.ISupportInitialize)btnUpload).EndInit();
             ((System.ComponentModel.ISupportInitialize)btnClose).EndInit();
             panelMid.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)mainScreen).EndInit();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             SettingPanel.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)mainScreen).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             panelBot.ResumeLayout(false);
             panelBot.PerformLayout();
             ResumeLayout(false);
@@ -462,7 +455,6 @@
         private PictureBox btnUpload;
         private ComboBox cmbCompany;
         private Label label9;
-        private ProgressBar progressBar;
         private Label label3;
         private CheckBox SaveOption;
     }
