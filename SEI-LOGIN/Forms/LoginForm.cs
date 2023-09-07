@@ -8,14 +8,13 @@ namespace SEI_LOGIN.Forms
 {
     public partial class LoginForm : Form
     {
+        string[] fileNames = { "SEIERP" };
         private BindingList<object> companyList = new BindingList<object>();
 
         public LoginForm()
         {
             InitializeComponent();
-
             Config.GetConfigIni();
-
             InitForm();
         }
 
@@ -23,10 +22,7 @@ namespace SEI_LOGIN.Forms
         {
             SetConfigIni();
             CompanyInit();
-
-            SettingPanel.Visible = false;
-            txtID.Text = "SUPER";
-            txtPassword.Text = "GIANT";
+            Settings();
 
             void CompanyInit()
             {
@@ -36,7 +32,6 @@ namespace SEI_LOGIN.Forms
                     con.Open();
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = cmd.ExecuteReader();
-
                     while (reader.Read())
                     {
                         companyList.Add(new { Code = reader["CD_CODE"], Name = reader["NM_CODE"] });
@@ -49,43 +44,33 @@ namespace SEI_LOGIN.Forms
                 cmbCompany.SelectedIndex = 0;
             }
 
-            void SetConfigIni()
+            void Settings()
             {
-                try
-                {
-                    txtDBAddress.Text = Config.DBAddress;
-                    txtPort.Text = Config.DBPort;
-                    txtUID.Text = Config.DBUserID;
-                    txtDBPassword.Text = Config.DBUserPwd;
-                    txtDatabase.Text = Config.DBDatabase;
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
+                //Visible Check
+                SettingPanel.Visible = false;
+                msg.Visible = false;
+
+                //Components Check
+                txtID.Text = Properties.Settings.Default.IDSave;
+                txtID.Focus();
+                SaveOption.Checked = Properties.Settings.Default.SaveOption;
+
+                if (txtID.Text.Length > 0)
+                    txtPassword.Focus();
             }
         }
 
-        private void btn_login_Click(object sender, EventArgs e)
+        private void SetConfigIni()
         {
-            string filePath = Application.StartupPath;
-            const string fileName = "SEIERP";
-
-            //파일실행유무 체크
-            if (Fn_isProcessing(fileName))
+            try
             {
-                //Code Finding SEIERP
-                DialogResult result = MessageBox.Show("실행중인 프로그램이 있습니다. 종료하고 진행하시겠습니까?", "", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
-                {
-                    //Code Killing SEIERP
-                    Fn_killingProcess(fileName);
-                }
+                txtDBAddress.Text = Config.DBAddress;
+                txtPort.Text = Config.DBPort;
+                txtUID.Text = Config.DBUserID;
+                txtDBPassword.Text = Config.DBUserPwd;
+                txtDatabase.Text = Config.DBDatabase;
             }
-
-            //파일유무 체크
-            //Code DBFile & LocalFile Compare
-            if (Fn_fileExist(filePath))
-            {
-                //Code
-            }
+            catch (Exception e) { Console.WriteLine(e.Message); }
         }
 
         private static bool Fn_isProcessing(string processName)
@@ -111,9 +96,9 @@ namespace SEI_LOGIN.Forms
                 try
                 {
                     //저장여부 물어보고 닫기
-                    process.CloseMainWindow();
+                    //process.CloseMainWindow();
                     //강제종료
-                    //process.Kill();
+                    process.Kill();
                     process.Close();
                 }
                 catch (Exception ex)
@@ -123,9 +108,40 @@ namespace SEI_LOGIN.Forms
             }
         }
 
-        private static bool Fn_fileExist(string filePath)
+        private static bool Fn_fileExist()
         {
-            if (!File.Exists(filePath)) return false;
+            DirectoryInfo DirPath = new System.IO.DirectoryInfo(Application.StartupPath);
+            FileInfo[] files = DirPath.GetFiles("*.exe");
+
+            string UpFileName = string.Empty;
+            DateTime UpFileDate;
+            string UpDownFolder = string.Empty;
+
+            using (SqlConnection con = new SqlConnection(Config.DBConnectString))
+            using (SqlCommand cmd = new SqlCommand("SP_SYS_UPDATEFILE_CHK_S", con))
+            {
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    UpFileName = reader["NM_FILE"].ToString();
+                    UpFileDate = DateTime.Parse(reader["DT_FILE"].ToString());
+                    UpDownFolder = reader["NM_DOWNFOLDER"].ToString();
+
+                    //실행파일 경우만
+                    if (UpDownFolder == "EXECUTE")
+                    {
+                        foreach (FileInfo file in files)
+                        {
+                            if (file.FullName == UpFileName && DateTime.Compare(file.LastWriteTime, UpFileDate) > 0)
+                            {
+                                MBox.ShowMessage("Continue");
+                            }
+                        }
+                    }
+                }
+            }
 
             return true;
         }
@@ -153,10 +169,65 @@ namespace SEI_LOGIN.Forms
             string userId = txtID.Text.ToString();
             string userPwd = txtPassword.Text.ToString();
 
-            if (Login(companyValue, userId, userPwd))
-                MessageBox.Show("Login Successed", "Login", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (txtID.Text.Equals(""))
+            {
+                MBox.ShowErrorMessage("사용자ID를 입력하세요.");
+                txtID.Focus();
+                return;
+            }
+            else if (txtPassword.Text.Equals(""))
+            {
+                MBox.ShowErrorMessage("사용자PWD를 입력하세요.");
+                txtPassword.Focus();
+                return;
+            }
             else
+            {
+                if (SaveOption.Checked)
+                {
+                    Properties.Settings.Default.SaveOption = SaveOption.Checked;
+                    Properties.Settings.Default.IDSave = txtID.Text;
+                    Properties.Settings.Default.Save();
+                }
+            }
+
+            if (Login(companyValue, userId, userPwd))
+            {
+                foreach (string fileName in fileNames)
+                {
+                    //파일실행유무 체크
+                    if (Fn_isProcessing(fileName))
+                    {
+                        //Code Finding SEIERP
+                        DialogResult result = MessageBox.Show("실행중인 프로그램이 있습니다. 종료하고 진행하시겠습니까?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (result == DialogResult.Yes)
+                        {
+                            //Code Killing SEIERP
+                            Fn_killingProcess(fileName);
+                        }
+                    }
+                }
+
+                //Msg Showing
+                MessageVisible();
+                MessageShowing("업데이트 파일이 있는지 확인중입니다.");
+
+                //파일유무 체크
+                //Code DBFile & LocalFile Compare
+                if (Fn_fileExist())
+                {
+                    //Code
+                }
+
+
+                //Msg Closing
+                MessageVisible();
+                MessageBox.Show("Login Successed", "Login", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
                 MessageBox.Show("Login Failed");
+            }
 
 
         }
@@ -186,9 +257,7 @@ namespace SEI_LOGIN.Forms
             string UID = txtUID.Text;
             string PWD = txtDBPassword.Text;
 
-            Config.SetConfigIni(DBAddress, DBPort, Database, UID, PWD);
-
-            SettingsVisible();
+            if (Config.SetConfigIni(DBAddress, DBPort, Database, UID, PWD)) { SettingsVisible(); }
         }
 
         private void SettingsVisible()
@@ -198,7 +267,18 @@ namespace SEI_LOGIN.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            SetConfigIni();
             SettingsVisible();
+        }
+
+        private void MessageVisible()
+        {
+            msg.Visible = !msg.Visible;
+        }
+
+        private void MessageShowing(string Message)
+        {
+            msg.Text = Message;
         }
     }
 }

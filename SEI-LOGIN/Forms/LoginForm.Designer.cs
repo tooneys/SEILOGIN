@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             panelTop = new Panel();
+            label3 = new Label();
             btnUpload = new PictureBox();
             btnClose = new PictureBox();
             panelMid = new Panel();
@@ -60,6 +61,7 @@
             panelBot = new Panel();
             progressBar = new ProgressBar();
             msg = new Label();
+            SaveOption = new CheckBox();
             panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnUpload).BeginInit();
             ((System.ComponentModel.ISupportInitialize)btnClose).BeginInit();
@@ -73,6 +75,7 @@
             // 
             // panelTop
             // 
+            panelTop.Controls.Add(label3);
             panelTop.Controls.Add(btnUpload);
             panelTop.Controls.Add(btnClose);
             panelTop.Dock = DockStyle.Top;
@@ -80,6 +83,16 @@
             panelTop.Name = "panelTop";
             panelTop.Size = new Size(700, 50);
             panelTop.TabIndex = 0;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Arial Narrow", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            label3.Location = new Point(12, 9);
+            label3.Name = "label3";
+            label3.Size = new Size(128, 29);
+            label3.TabIndex = 3;
+            label3.Text = "K-giant Login";
             // 
             // btnUpload
             // 
@@ -107,6 +120,7 @@
             // 
             // panelMid
             // 
+            panelMid.Controls.Add(SettingPanel);
             panelMid.Controls.Add(mainScreen);
             panelMid.Controls.Add(panel1);
             panelMid.Dock = DockStyle.Fill;
@@ -121,14 +135,14 @@
             mainScreen.Image = (Image)resources.GetObject("mainScreen.Image");
             mainScreen.Location = new Point(0, 0);
             mainScreen.Name = "mainScreen";
-            mainScreen.Size = new Size(389, 300);
+            mainScreen.Size = new Size(396, 300);
             mainScreen.SizeMode = PictureBoxSizeMode.StretchImage;
             mainScreen.TabIndex = 0;
             mainScreen.TabStop = false;
             // 
             // panel1
             // 
-            panel1.Controls.Add(SettingPanel);
+            panel1.Controls.Add(SaveOption);
             panel1.Controls.Add(cmbCompany);
             panel1.Controls.Add(btnSettings);
             panel1.Controls.Add(btnLogin);
@@ -146,7 +160,7 @@
             // SettingPanel
             // 
             SettingPanel.Controls.Add(groupBox1);
-            SettingPanel.Location = new Point(71, 20);
+            SettingPanel.Location = new Point(124, 30);
             SettingPanel.Name = "SettingPanel";
             SettingPanel.Size = new Size(252, 236);
             SettingPanel.TabIndex = 5;
@@ -282,7 +296,7 @@
             // cmbCompany
             // 
             cmbCompany.FormattingEnabled = true;
-            cmbCompany.Location = new Point(140, 87);
+            cmbCompany.Location = new Point(147, 87);
             cmbCompany.Name = "cmbCompany";
             cmbCompany.Size = new Size(167, 22);
             cmbCompany.TabIndex = 5;
@@ -290,7 +304,7 @@
             // 
             // btnSettings
             // 
-            btnSettings.Location = new Point(206, 182);
+            btnSettings.Location = new Point(214, 194);
             btnSettings.Name = "btnSettings";
             btnSettings.Size = new Size(88, 25);
             btnSettings.TabIndex = 4;
@@ -300,7 +314,7 @@
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(112, 182);
+            btnLogin.Location = new Point(120, 194);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(88, 25);
             btnLogin.TabIndex = 3;
@@ -310,7 +324,7 @@
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(140, 142);
+            txtPassword.Location = new Point(147, 142);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
             txtPassword.Size = new Size(167, 22);
@@ -318,7 +332,7 @@
             // 
             // txtID
             // 
-            txtID.Location = new Point(140, 114);
+            txtID.Location = new Point(147, 114);
             txtID.Name = "txtID";
             txtID.Size = new Size(167, 22);
             txtID.TabIndex = 1;
@@ -326,7 +340,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(71, 145);
+            label2.Location = new Point(78, 145);
             label2.Name = "label2";
             label2.Size = new Size(63, 14);
             label2.TabIndex = 0;
@@ -335,7 +349,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(78, 90);
+            label9.Location = new Point(85, 90);
             label9.Name = "label9";
             label9.Size = new Size(56, 14);
             label9.TabIndex = 0;
@@ -344,7 +358,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(113, 117);
+            label1.Location = new Point(120, 117);
             label1.Name = "label1";
             label1.Size = new Size(21, 14);
             label1.TabIndex = 0;
@@ -376,6 +390,16 @@
             msg.TabIndex = 0;
             msg.Text = "업데이트 파일이 있는지 확인중입니다.";
             // 
+            // SaveOption
+            // 
+            SaveOption.AutoSize = true;
+            SaveOption.Location = new Point(256, 170);
+            SaveOption.Name = "SaveOption";
+            SaveOption.Size = new Size(58, 18);
+            SaveOption.TabIndex = 6;
+            SaveOption.Text = "ID저장";
+            SaveOption.UseVisualStyleBackColor = true;
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 14F);
@@ -385,10 +409,13 @@
             Controls.Add(panelBot);
             Controls.Add(panelTop);
             Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             Name = "LoginForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "(주)케이언트";
             panelTop.ResumeLayout(false);
+            panelTop.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)btnUpload).EndInit();
             ((System.ComponentModel.ISupportInitialize)btnClose).EndInit();
             panelMid.ResumeLayout(false);
@@ -436,5 +463,7 @@
         private ComboBox cmbCompany;
         private Label label9;
         private ProgressBar progressBar;
+        private Label label3;
+        private CheckBox SaveOption;
     }
 }

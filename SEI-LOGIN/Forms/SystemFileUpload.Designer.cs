@@ -51,9 +51,9 @@
             panelTop.Controls.Add(label3);
             panelTop.Controls.Add(btnClose);
             panelTop.Dock = DockStyle.Top;
-            panelTop.Location = new Point(20, 60);
+            panelTop.Location = new Point(0, 0);
             panelTop.Name = "panelTop";
-            panelTop.Size = new Size(660, 50);
+            panelTop.Size = new Size(700, 50);
             panelTop.TabIndex = 1;
             // 
             // label3
@@ -70,7 +70,7 @@
             // 
             btnClose.Dock = DockStyle.Right;
             btnClose.Image = Properties.Resources.Close;
-            btnClose.Location = new Point(601, 0);
+            btnClose.Location = new Point(641, 0);
             btnClose.Name = "btnClose";
             btnClose.Size = new Size(59, 50);
             btnClose.SizeMode = PictureBoxSizeMode.CenterImage;
@@ -180,7 +180,9 @@
             Controls.Add(AddList);
             Controls.Add(UploadedList);
             Controls.Add(panelTop);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "SystemFileUpload";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "실행파일 업로드";
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();

@@ -33,7 +33,7 @@ namespace SEI_LOGIN.Common
             }
         }
 
-        public static void SetConfigIni(string DBAddress, string DBPort, string Database, string UID, string PWD)
+        public static bool SetConfigIni(string DBAddress, string DBPort, string Database, string UID, string PWD)
         {
             try
             {
@@ -43,8 +43,8 @@ namespace SEI_LOGIN.Common
                     string.IsNullOrEmpty(UID) ||
                     string.IsNullOrEmpty(PWD))
                 {
-                    MessageBox.Show("모든 필드를 입력하세요.");
-                    return;
+                    MessageBox.Show("모든 필드를 입력하세요.", "확인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
                 }
 
                 string initFilePath = Application.StartupPath + "\\common.ini";
@@ -54,11 +54,13 @@ namespace SEI_LOGIN.Common
                 Util.WriteIniFile("DATABASE", "S_UID", Security.Encrypt(UID), initFilePath);
                 Util.WriteIniFile("DATABASE", "S_PWD", Security.Encrypt(PWD), initFilePath);
 
-                MessageBox.Show("저장 되었습니다.");
+                MessageBox.Show("저장 되었습니다.", "저장", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return false;
             }
         }
     }
