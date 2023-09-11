@@ -72,7 +72,7 @@ namespace SEI_LOGIN.Forms
             catch (Exception e) { Console.WriteLine(e.Message); }
         }
 
-        private static bool Fn_isProcessing(string processName)
+        private static async Task<bool> Fn_isProcessing(string processName)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace SEI_LOGIN.Forms
             }
         }
 
-        private static void Fn_killingProcess(string processName)
+        private static async Task Fn_killingProcess(string processName)
         {
             Process[] processes = Process.GetProcessesByName(processName);
             foreach (Process process in processes)
@@ -104,41 +104,6 @@ namespace SEI_LOGIN.Forms
             }
         }
 
-        private static bool Fn_fileExist()
-        {
-
-            DirectoryInfo DirPath = new System.IO.DirectoryInfo(Application.StartupPath);
-            FileInfo[] files = DirPath.GetFiles("*.exe");
-
-            using (SqlConnection con = new SqlConnection(Config.DBConnectString))
-            using (SqlCommand cmd = new SqlCommand("SP_SYS_UPDATEFILE_CHK_S", con))
-            {
-                con.Open();
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    string UpFileName = reader["NM_FILE"].ToString();
-                    DateTime UpFileDate = DateTime.Parse(reader["DT_FILE"].ToString());
-                    string UpDownFolder = reader["NM_DOWNFOLDER"].ToString();
-
-                    //실행파일 경우만
-                    if (UpDownFolder == "EXECUTE")
-                    {
-                        foreach (FileInfo file in files)
-                        {
-                            if (file.FullName == UpFileName && DateTime.Compare(file.LastWriteTime, UpFileDate) > 0)
-                            {
-                                MBox.ShowMessage("Continue");
-                            }
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -151,14 +116,14 @@ namespace SEI_LOGIN.Forms
 
         private void btnUpload_Click(object sender, EventArgs e)
         {
-            string CorpCode = cmbCompany.SelectedValue.ToString();
+            string? CorpCode = cmbCompany.SelectedValue.ToString();
             SystemFileUpload fileUpload = new SystemFileUpload(CorpCode);
             fileUpload.ShowDialog();
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        private async void btnLogin_Click(object sender, EventArgs e)
         {
-            string companyValue = cmbCompany.SelectedValue.ToString();
+            string? companyValue = cmbCompany.SelectedValue.ToString();
             string userId = txtID.Text.ToString();
             string userPwd = txtPassword.Text.ToString();
 
@@ -184,36 +149,61 @@ namespace SEI_LOGIN.Forms
                 }
             }
 
-            if (Login(companyValue, userId, userPwd))
+            //Message Visible
+            MessageVisible();
+
+            if (await Login(companyValue!, userId, userPwd))
             {
-                MessageVisible();
                 //Process Finished
-                MessageShowing("기존 실행프로그램을 종료합니다.");
+                MessageShowing("Exits the existing launcher.");
                 foreach (string fileName in fileNames)
                 {
-                    if (Fn_isProcessing(fileName))
+                    if (await Fn_isProcessing(fileName))
                     {
-                        Fn_killingProcess(fileName);
+                        await Fn_killingProcess(fileName);
                     }
                 }
-                
-                MessageShowing("업데이트 파일이 있는지 확인중입니다.");
-                
+
+                MessageShowing("Checking for update files.");
+
                 //UploadFile Download
-                int DownloadCount = UploadFileCount();
-                MessageShowing($" {DownloadCount}개 파일 다운로드 합니다.");
+                int DownloadCount = await UploadFileCount();
+
+                //File Downloading...
+                await DownloadUpdateFile(companyValue!);
 
 
-                MessageShowing("업데이트가 완료되었습니다.");
+                if (DownloadCount > 0)
+                    MessageShowing($" {DownloadCount} Download the files.");
+
+                //File Transfer
+                //Upload 폴더에 있는 파일은 전부 옮겨가기
+                var sourceDirectory = new DirectoryInfo(Path.Combine(Application.StartupPath, "Upload"));
+                var destDirectory = new DirectoryInfo(Application.StartupPath);
+                CopyDirectories(sourceDirectory, destDirectory);
+
+                //File Transfer Complete
+                MessageShowing("The update is complete.");
+                
+                //Upload Folder Delete
+                Directory.Delete(Path.Combine(Application.StartupPath, "Upload"), true);
+
+                //SEIERP.exe Execute
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = Application.StartupPath + "\\SEIERP.EXE",
+                    Arguments = ""
+                });
+
                 Application.Exit();
             }
             else
             {
-                MBox.ShowErrorMessage("Login Failed");
+                MessageShowing("Login failed... Retrying.");
             }
         }
 
-        private static bool Login(string Company, string Id, string Pwd)
+        private static async Task<bool> Login(string Company, string Id, string Pwd)
         {
             using (SqlConnection con = new SqlConnection(Config.DBConnectString))
             using (SqlCommand cmd = new SqlCommand("SP_SYS_LOGIN_CHK_S", con))
@@ -241,10 +231,7 @@ namespace SEI_LOGIN.Forms
             if (Config.SetConfigIni(DBAddress, DBPort, Database, UID, PWD)) { SettingsVisible(); }
         }
 
-        private void SettingsVisible()
-        {
-            SettingPanel.Visible = !SettingPanel.Visible;
-        }
+        private void SettingsVisible() => SettingPanel.Visible = !SettingPanel.Visible;
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -252,17 +239,11 @@ namespace SEI_LOGIN.Forms
             SettingsVisible();
         }
 
-        private void MessageVisible()
-        {
-            msg.Visible = !msg.Visible;
-        }
+        private void MessageVisible() => msg.Visible = !msg.Visible;
 
-        private void MessageShowing(string Message)
-        {
-            msg.Text = Message;
-        }
+        private void MessageShowing(string Message) => msg.Text = Message;
 
-        private int UploadFileCount()
+        private async Task<int> UploadFileCount()
         {
             int count = 0;
             using (SqlConnection con = new SqlConnection(Config.DBConnectString))
@@ -277,6 +258,66 @@ namespace SEI_LOGIN.Forms
                 }
             }
             return count;
+        }
+
+        private async Task DownloadUpdateFile(string CorpCode)
+        {
+            string position = "Upload";
+
+            byte[] bytes = null;
+            DateTime fileDate;
+            string dirName = string.Empty;
+            string fileName = string.Empty;
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(Config.DBConnectString))
+                using (SqlCommand cmd = new SqlCommand("SP_SYS_DOWNLOAD_UPDATEFILES_S", con))
+                {
+                    con.Open();
+                    cmd.Parameters.AddWithValue("@CD_CORP", CorpCode);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        fileName = reader["NM_FILE"].ToString();
+                        fileDate = DateTime.Parse(reader["DT_FILE"].ToString());
+                        bytes = (byte[])reader["IM_FILEDATA"];
+
+                        string downFolder = reader["NM_DOWNFOLDER"].ToString();
+                        dirName = Path.Combine(Application.StartupPath, position, downFolder == "EXECUTE" ? "" : downFolder);
+
+                        DirectoryInfo dirInfo = new DirectoryInfo(dirName);
+                        if (!dirInfo.Exists)
+                            dirInfo.Create();
+
+                        File.WriteAllBytes(Path.Combine(dirName, fileName), bytes);
+
+                        FileInfo fileInfo = new FileInfo(Path.Combine(dirName, fileName));
+                        fileInfo.CreationTime = fileInfo.LastAccessTime = fileInfo.LastWriteTime = fileDate;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageShowing($"[Downloading UpdateFile] :  + {ex.Message}");
+            }
+        }
+
+        private void CopyDirectories(DirectoryInfo sourceDirectory, DirectoryInfo destDirectory)
+        {
+            MessageShowing("파일 복사 중 입니다.");
+
+            foreach (FileInfo file in sourceDirectory.GetFiles())
+            {
+                file.CopyTo(Path.Combine(destDirectory.FullName, file.Name), true);
+            }
+
+            foreach (DirectoryInfo subDirectory in sourceDirectory.GetDirectories())
+            {
+                DirectoryInfo destSubDirectory = destDirectory.CreateSubdirectory(subDirectory.Name);
+                CopyDirectories(subDirectory, destSubDirectory);
+            }
         }
     }
 }
