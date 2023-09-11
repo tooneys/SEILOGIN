@@ -14,35 +14,21 @@ namespace SEI_LOGIN.Forms
         public LoginForm()
         {
             InitializeComponent();
-            Config.GetConfigIni();
+            //Init
             InitForm();
         }
 
         private void InitForm()
         {
             SetConfigIni();
-            CompanyInit();
             Settings();
 
-            void CompanyInit()
+            if (!Config.GetConfigIni())
             {
-                using (SqlConnection con = new SqlConnection(Config.DBConnectString))
-                using (SqlCommand cmd = new SqlCommand("SP_COMN_COMPANY_CMB", con))
-                {
-                    con.Open();
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        companyList.Add(new { Code = reader["CD_CODE"], Name = reader["NM_CODE"] });
-                    }
-                }
-
-                cmbCompany.DataSource = companyList;
-                cmbCompany.DisplayMember = "Name";
-                cmbCompany.ValueMember = "Code";
-                cmbCompany.SelectedIndex = 0;
+                _ = !SettingsVisible() ? txtDBAddress.Focus() : txtID.Focus();
+                return;
             }
+            CompanyInit();
 
             void Settings()
             {
@@ -57,6 +43,26 @@ namespace SEI_LOGIN.Forms
 
                 if (txtID.Text.Length > 0) { txtPassword.Focus(); }
             }
+        }
+
+        private void CompanyInit()
+        {
+            using (SqlConnection con = new SqlConnection(Config.DBConnectString))
+            using (SqlCommand cmd = new SqlCommand("SP_COMN_COMPANY_CMB", con))
+            {
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    companyList.Add(new { Code = reader["CD_CODE"], Name = reader["NM_CODE"] });
+                }
+            }
+
+            cmbCompany.DataSource = companyList;
+            cmbCompany.DisplayMember = "Name";
+            cmbCompany.ValueMember = "Code";
+            cmbCompany.SelectedIndex = 0;
         }
 
         private void SetConfigIni()
@@ -122,6 +128,11 @@ namespace SEI_LOGIN.Forms
         }
 
         private async void btnLogin_Click(object sender, EventArgs e)
+        {
+            await OnLogin();
+        }
+
+        private async Task OnLogin()
         {
             string? companyValue = cmbCompany.SelectedValue.ToString();
             string userId = txtID.Text.ToString();
@@ -228,10 +239,17 @@ namespace SEI_LOGIN.Forms
             string UID = txtUID.Text;
             string PWD = txtDBPassword.Text;
 
-            if (Config.SetConfigIni(DBAddress, DBPort, Database, UID, PWD)) { SettingsVisible(); }
+            if (Config.SetConfigIni(DBAddress, DBPort, Database, UID, PWD))
+            {
+                SettingsVisible();
+                CompanyInit();
+            }
         }
 
-        private void SettingsVisible() => SettingPanel.Visible = !SettingPanel.Visible;
+        private bool SettingsVisible()
+        {
+            return SettingPanel.Visible = !SettingPanel.Visible;
+        }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -318,6 +336,11 @@ namespace SEI_LOGIN.Forms
                 DirectoryInfo destSubDirectory = destDirectory.CreateSubdirectory(subDirectory.Name);
                 CopyDirectories(subDirectory, destSubDirectory);
             }
+        }
+
+        private async void txtPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) await OnLogin();
         }
     }
 }

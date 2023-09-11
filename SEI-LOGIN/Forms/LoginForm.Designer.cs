@@ -299,6 +299,7 @@
             SaveOption.Name = "SaveOption";
             SaveOption.Size = new Size(58, 18);
             SaveOption.TabIndex = 6;
+            SaveOption.TabStop = false;
             SaveOption.Text = "ID저장";
             SaveOption.UseVisualStyleBackColor = true;
             // 
@@ -340,6 +341,7 @@
             txtPassword.PasswordChar = '*';
             txtPassword.Size = new Size(167, 22);
             txtPassword.TabIndex = 2;
+            txtPassword.KeyDown += txtPassword_KeyDown;
             // 
             // txtID
             // 

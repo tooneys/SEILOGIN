@@ -5,31 +5,41 @@ namespace SEI_LOGIN.Common
     internal class Config : ConfigBase
     {
 
-        public static void GetConfigIni()
+        public static bool GetConfigIni()
         {
-            string? sProgramName = Assembly.GetExecutingAssembly().GetName().CodeBase;           //프로그램명
-            string? sProgramPath = Path.GetDirectoryName(sProgramName?.Replace("file:///", ""));  //프로그램 위치
-            string sCommonPath = (sProgramPath + "\\common.ini");
-
-            Config.DBType = Program.Configuration["DBType"];
-            Config.DBAddress = Security.Decrypt(Util.ReadIniFile("DATABASE", "ADDRESS", sCommonPath));
-            Config.DBPort = Security.Decrypt(Util.ReadIniFile("DATABASE", "PORT", sCommonPath));
-            Config.DBDatabase = Security.Decrypt(Util.ReadIniFile("DATABASE", "DATABASE", sCommonPath));
-            Config.DBUserID = Security.Decrypt(Util.ReadIniFile("DATABASE", "S_UID", sCommonPath));
-            Config.DBUserPwd = Security.Decrypt(Util.ReadIniFile("DATABASE", "S_PWD", sCommonPath));
-            Config.QUERYTIME = "0";
-
-            switch (Config.DBType)
+            try
             {
-                case "MSSQL":
-                    Config.DBConnectString = $"Data Source={Config.DBAddress},{Config.DBPort};Initial Catalog={Config.DBDatabase};User ID={Config.DBUserID};Password={Config.DBUserPwd};Enlist=false;Connection Timeout=1000000;";
-                    break;
-                case "ORACLE":
-                    Config.DBConnectString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Config.DBAddress})(PORT={Config.DBPort}))(CONNECT_DATA=(SERVICE_NAME={Config.DBDatabase})));User Id={Config.DBUserID};Password={Config.DBUserPwd};";
-                    break;
-                default:
-                    Config.DBConnectString = "";
-                    break;
+                string? sProgramName = Assembly.GetExecutingAssembly().GetName().CodeBase;           //프로그램명
+                string? sProgramPath = Path.GetDirectoryName(sProgramName?.Replace("file:///", ""));  //프로그램 위치
+                string sCommonPath = Path.Combine(sProgramPath, "common.ini");
+
+                if (!File.Exists(sCommonPath)) return false;
+
+                Config.DBType = Program.Configuration["DBType"]!;
+                Config.DBAddress = Security.Decrypt(Util.ReadIniFile("DATABASE", "ADDRESS", sCommonPath));
+                Config.DBPort = Security.Decrypt(Util.ReadIniFile("DATABASE", "PORT", sCommonPath));
+                Config.DBDatabase = Security.Decrypt(Util.ReadIniFile("DATABASE", "DATABASE", sCommonPath));
+                Config.DBUserID = Security.Decrypt(Util.ReadIniFile("DATABASE", "S_UID", sCommonPath));
+                Config.DBUserPwd = Security.Decrypt(Util.ReadIniFile("DATABASE", "S_PWD", sCommonPath));
+                Config.QUERYTIME = "0";
+
+                switch (Config.DBType)
+                {
+                    case "MSSQL":
+                        Config.DBConnectString = $"Data Source={Config.DBAddress},{Config.DBPort};Initial Catalog={Config.DBDatabase};User ID={Config.DBUserID};Password={Config.DBUserPwd};Enlist=false;Connection Timeout=1000000;";
+                        break;
+                    case "ORACLE":
+                        Config.DBConnectString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Config.DBAddress})(PORT={Config.DBPort}))(CONNECT_DATA=(SERVICE_NAME={Config.DBDatabase})));User Id={Config.DBUserID};Password={Config.DBUserPwd};";
+                        break;
+                    default:
+                        Config.DBConnectString = "";
+                        break;
+                }
+                return true;
+            }
+            catch (Exception ex) { 
+                Console.WriteLine(ex.Message);
+                return false; 
             }
         }
 
