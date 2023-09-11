@@ -184,7 +184,7 @@ namespace SEI_LOGIN.Forms
 
                 //File Transfer Complete
                 MessageShowing("The update is complete.");
-                
+
                 //Upload Folder Delete
                 Directory.Delete(Path.Combine(Application.StartupPath, "Upload"), true);
 
